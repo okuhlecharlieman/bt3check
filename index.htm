@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battery Health Calculator (With Status)</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; max-width: 600px; margin: auto; }
+        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+        #result { margin-top: 20px; font-size: 24px; }
+        #status { font-size: 20px; font-weight: bold; }
+        .gauge { width: 100%; height: 20px; background: #e0e0e0; border-radius: 10px; margin: 10px 0; position: relative; }
+        .gauge-fill { height: 100%; border-radius: 10px; transition: width 0.5s; }
+        @media (max-width: 480px) { body { padding: 10px; } input, button { font-size: 16px; } }
+    </style>
+</head>
+<body>
+    <h2>Battery Health Calculator</h2>
+    <p>Enter values from your report (in mWh):</p>
+    <input type="number" id="design" placeholder="Design Capacity (e.g., 58003)" value="58003">
+    <input type="number" id="full" placeholder="Full Charge Capacity (e.g., 39201)" value="39201">
+    <button onclick="calculateHealth()">Calculate Health</button>
+    <div id="result"></div>
+    <div id="status"></div>
+    <div class="gauge"><div id="gauge-fill" class="gauge-fill"></div></div>
+
+    <script>
+        function calculateHealth() {
+            const design = parseFloat(document.getElementById('design').value);
+            const full = parseFloat(document.getElementById('full').value);
+            if (isNaN(design) || isNaN(full) || design <= 0 || full <= 0) {
+                document.getElementById('result').innerHTML = 'Please enter valid positive numbers.';
+                document.getElementById('status').innerHTML = '';
+                return;
+            }
+            const health = Math.round((full / design) * 100 * 10) / 10; // Round to 1 decimal
+            document.getElementById('result').innerHTML = `Battery Health: ${health}%`;
+            
+            let statusText = '';
+            let color = '';
+            if (health > 90) {
+                statusText = 'Excellent';
+                color = 'green';
+            } else if (health > 80) {
+                statusText = 'Good';
+                color = 'lightgreen';
+            } else if (health > 60) {
+                statusText = 'Fair';
+                color = 'yellow';
+            } else {
+                statusText = 'Poor';
+                color = 'red';
+            }
+            document.getElementById('status').innerHTML = `Status: ${statusText}`;
+            document.getElementById('status').style.color = color;
+            
+            const fill = document.getElementById('gauge-fill');
+            fill.style.width = `${health}%`;
+            fill.style.background = color;
+        }
+    </script>
+</body>
+</html>
